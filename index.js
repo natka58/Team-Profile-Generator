@@ -1,15 +1,62 @@
 const fs = require(`fs`);
 const inquirer = require(`inquirer`);
-const Manager = require(`./lib/Manager`)
-const Engineer = require(`./lib/Engineer`)
-const Intern = require(`./lib/Intern`)
-const employeeArray = [];
-function generateMarkdown(data) {
-    return `${data}`;
+const menu = require('inquirer-menu');
+const Managerclass = require('./lib/Manager')
+const Engineerclass = require('./lib/Engineer')
+const Internclass = require('./lib/Intern')
+// const  = require('./lib/Manager')
+
+'<div class="container flex-row justify-space-between align-center py-3">  <h1 page-title text-center py-2 px-3 style="background-color: red; color: white;">My Team</h1>  </div>'
+function generateMarkdown(managerlist, engineerlist, internlist) {
+    var managerHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+    for (var i = 0; i < managerlist.length; i++) {
+        managerHTML = `${managerHTML}<h4><b>Name:  ${managerlist[i].getName()}</b></h4>`;
+        managerHTML = `${managerHTML}<h4><b><i class="oi oi-fork "> Role: ${managerlist[i].getRole()}</i></b></h4>`;
+        managerHTML = `${managerHTML}<p>Employee ID: ${managerlist[i].getId()}</p>`;
+        managerHTML = `${managerHTML}<p>e-mail: <a href="mailto:${managerlist[i].getEmail()}">${managerlist[i].getEmail()}</a></p>`;
+        managerHTML = `${managerHTML}<p>Office Number: ${managerlist[i].getOfficeNumber()}</p></div><br/>`;
+    }
+
+    managerHTML = `${managerHTML}</div>`;
+    var engineerHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+    for (var i = 0; i < engineerlist.length; i++) {
+        var no = i + 1;
+        engineerHTML = `${engineerHTML}<h4><b>Name:  ${engineerlist[i].getName()}</b></h4>`;
+        engineerHTML = `${engineerHTML}<h4><b><i class="oi oi-browser "> Role: ${engineerlist[i].getRole()}</i></b></h4>`;
+        engineerHTML = `${engineerHTML}<p>Employee ID:${engineerlist[i].getId()}</p>`;
+        engineerHTML = `${engineerHTML}<p>e-mail: <a href="mailto:${engineerlist[i].getEmail()}">${engineerlist[i].getEmail()}</a></p>`;
+        engineerHTML = `${engineerHTML}<p>GitHub username:  <a href="https://github.com/${engineerlist[i].getGitHub()}">${engineerlist[i].getGitHub()}</a></p></div><br/>`;
+    }
+    engineerHTML = `${engineerHTML}</div>`;
+
+    var internHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+    for (var i = 0; i < internlist.length; i++) {
+        var no = i + 1;
+        internHTML = `${internHTML}<h4><b>Name:  ${internlist[i].getName()}</b></h4>`;
+        internHTML = `${internHTML}<h4><b><i class="oi oi-book "> Role: ${internlist[i].getRole()}</i></b></h4>`;
+        internHTML = `${internHTML}<p>Employee ID:${internlist[i].getId()}</p>`;
+        internHTML = `${internHTML}<p>e-mail: <a href="mailto:${internlist[i].getEmail()}">${internlist[i].getEmail()}</a></p>`;
+        internHTML = `${internHTML}<p>School:  ${internlist[i].getSchool()}</p></div><br/>`;
+    }
+    internHTML = `${internHTML}</div>`;
+    var beginHTML = '<html><head><meta charset="utf-8">' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+        '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">' +
+        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />' +
+        '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>' +
+        '<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>' +
+        '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script></head><body><div class="container">';
+    var endHTML = '</div></body></html>';
+    return beginHTML + managerHTML + engineerHTML + internHTML + endHTML;
 };
 
+var managerlist = [];
+var engineerlist = [];
+var internlist = [];
+
+
 // Manager properties name Id emailoffice number getName() getID() getEmail() getRole() officeNumber getRole() //Overridden to return 'Manager'
-const ManagerData = () => {
+const Manager = () => {
     return inquirer.prompt([
         {
             type: `input`,
@@ -39,17 +86,22 @@ const ManagerData = () => {
                     return false;
                 }
             }
-               },
+
+
+
+        },
         {
             type: `input`,
             name: `email`,
             message: `What are the managers email?`,
-            validate: emailInput => {
-                if (emailInput) {
+            validate: email => {
+                const emailChar = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+
+                if (emailChar) {
                     return true;
                 }
                 else {
-                    console.log('Please enter managers email!');
+                    console.log('  Please enter valid email!');
                     return false;
                 }
             }
@@ -58,53 +110,66 @@ const ManagerData = () => {
         {
             type: `input`,
             name: `office`,
-            message: `What is the managers office number?`,
-            validate: officeInput => {
-                if (officeInput) {
-                    return true;
-                }
-                else {
-                    console.log('Please enter managers office number!');
-                    return false;
-                }
-            }
+            message: `What is the managers office number?`
         },
         {
             type: 'confirm',
             name: 'addemployee',
             message: 'Would you like to add another employee?',
-            default: false
-        },
+            default: true
+        }
+
+    ]).then(projectData => {
+        var newManager = new Managerclass(projectData.name, projectData.id, projectData.email, 'Manager', projectData.office);
+        managerlist.push(newManager);
+        if (projectData.addemployee) {
+            return promptQuestion();
+        } else {
+            return true;
+        }
+    });
+}
+Manager()
+    .then(managerData => {
+        const pageHTML = generateMarkdown(managerlist, engineerlist, internlist);
+        fs.writeFile(`myteam.html`, pageHTML, "utf8", err => {
+            if (err) throw new Error(err);
+
+            console.log(`File created! check out HTML in this directory to see it!`);
+        });
+    });
+
+const promptQuestion = () => {
+    return inquirer.prompt([
         {
             type: 'checkbox',
             name: 'role',
             message: 'What employee would you like to choose',
-            choices: ['Engineer', 'Intern', 'Team Completed']
+            choices: ['Engineer', 'Intern']
         }
-    ]).then(manager => {
-        let {
-            name, id, email, office, addemployee } = manager;
-        managerArray.push(new Manager(name, id, email, office));
-    
-        if (addemployee === false) {
-        return Promise.reject(employeeArray);
-    }
-})
+
+    ]).then(projectData => {
+
+        if (projectData.role == 'Engineer') {
+            return promptEngineer();
+        } else {
+            return promptIntern();
+        }
+    });
 }
-const addemployee = () => {
+
+const promptEngineer = () => {
     return inquirer.prompt([
         {
-            // const promptEngineer = () => {
-            //     return inquirer.prompt([
             type: `input`,
             name: `name`,
-            message: `What is the employees name?`,
+            message: `What is the engineers name?`,
             validate: nameInput => {
                 if (nameInput) {
                     return true;
                 }
                 else {
-                    console.log('Please enter employee name!');
+                    console.log('Please enter engineers name!');
                     return false;
                 }
             }
@@ -113,299 +178,131 @@ const addemployee = () => {
         {
             type: `input`,
             name: `id`,
-            message: `What is the employee ID?`,
+            message: `What is the engineers ID?`,
             validate: idInput => {
                 if (idInput) {
                     return true;
                 }
                 else {
-                    console.log('Please enter employee ID!');
+                    console.log('Please enter engineers ID!');
+                    return false;
+                }
+            }
+
+
+
+        },
+        {
+            type: `input`,
+            name: `email`,
+            message: `What are the engineers email?`,
+            validate: email => {
+                const emailChar = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+
+                if (emailChar) {
+                    return true;
+                }
+                else {
+                    console.log('  Please enter valid email!');
                     return false;
                 }
             }
         },
         {
             type: `input`,
-            name: `email`,
-            message: `What is employee email?`,
-            validate: emailInput => {
-                if (emailInput) {
+            name: `github`,
+            message: `What is engineers GitHub username?`
+        },
+        {
+            type: 'confirm',
+            name: 'addemployee',
+            message: 'Would you like to add another employee?',
+            default: true
+        }
+
+    ]).then(projectData => {
+        var newEngineer = new Engineerclass(projectData.name, projectData.id, projectData.email, 'Engineer', projectData.github);
+        engineerlist.push(newEngineer);
+        if (projectData.addemployee) {
+            return promptQuestion();
+        } else {
+            return true;
+        }
+
+    });
+}
+const promptIntern = () => {
+    return inquirer.prompt([
+        {
+            type: `input`,
+            name: `name`,
+            message: `What is the interns name?`,
+            validate: nameInput => {
+                if (nameInput) {
                     return true;
                 }
                 else {
-                    console.log('Please enter employee email!');
+                    console.log('Please enter interns name!');
                     return false;
                 }
             }
 
         },
-        // {
-        //     type: `input`,
-        //     name: `github`,
-        //     message: `What is engineers GitHub username?`
-        // },
         {
-            type: 'confirm',
-            name: 'addemployee',
-            message: 'Would you like to add another employee?',
-            default: false
-        },
-
-
-        {
-            type: 'checkbox',
-            name: 'role',
-            message: 'What employee would you like to choose',
-            choices: ['Engineer', 'Intern', 'Team Completed']
-        },
-        {
-            type: 'input',
-            name: 'github',
-            message: 'What is engineers Github username?',
-            when: (answers) => answers.role === 'Engineer',
-            validate: github => {
-                if (!github) {
-                    console.log('Engineer must have a Github username!');
-                    return false;
-                } else {
+            type: `input`,
+            name: `id`,
+            message: `What is the interns ID?`,
+            validate: idInput => {
+                if (idInput) {
                     return true;
                 }
-            }
-        },
-        {
-            type: 'input',
-            name: 'school',
-            message: 'What is interns school?',
-            when: (answers) => answers.role === 'Intern',
-            validate: school => {
-                if (!school) {
-                    console.log('Intern must have a school!');
+                else {
+                    console.log('Please enter interns ID!');
                     return false;
-                } else {
-                    return true;
                 }
             }
+
         },
         {
-            type: 'confirm',
-            name: 'addemployee',
-            message: 'Would you like to add another employee?',
-            default: false
-        },
-        {
-            type: 'checkbox',
-            name: 'role',
-            message: 'What employee would you like to choose',
-            choices: ['Engineer', 'Intern', 'Team Completed']
-        }
-    ]).then(employeeData => {
-        let {
-            name, id, email, addemployee, role, github, school } = employeeData;
-        let employeeObj;
-        if (role === 'Engineer') {
-            employeeObj = new Engineer (name, id, email, github);
-            console.log(employeeObj);
-        } else {
-            employeeObj -new Intern (name, id, email, school);
-            console.log(employeeObj);
-        }
-        employeeArray.push(employeeObj);
-        if (addemployee) {
-            return addEmployee(employeeArray);
-          } else {
-            return employeeArray;
-          }
-        });
-      };
-      const writeToFile = data => {
-        fs.writeFile('./dist/team.html', data, err => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-          else {
-            console.log(`File created! check out HTML in this directory to see it!`);
-          }
-        })
-    }
-    ManagerData ()
-    .then(addemployee)
-    .then(employeeArray => {
-        return generateMarkdown(employeeArray);
-    })
-    .then(htmlContent => {
-      return writeToFile(htmlContent);
-    })
-    .catch(err => {
-        const employeeArr = generateMarkdown(err);
-        writeToFile(employeeArr);
-      });      
+            type: `input`,
+            name: `email`,
+            message: `What are the interns email?`,
+                validate: email => {
+                    const emailChar = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
     
-   
+                    if (emailChar) {
+                        return true;
+                    }
+                    else {
+                        console.log('  Please enter valid email!');
+                        return false;
+                    }
+               
+              
+            }
 
-   
+        },
+        {
+            type: `input`,
+            name: `school`,
+            message: `What is interns school?`
+        },
+        {
+            type: 'confirm',
+            name: 'addemployee',
+            message: 'Would you like to add another employee?',
+            default: true
+        }
 
-
-// Manager()
-//     .then(managerData => {
-//         const pageHTML = generateMarkdown(managerData);
-//         fs.writeFile(`myteam.html`, pageHTML, "utf8", err => {
-//             if (err) throw new Error(err);
-
-//             console.log(`File created! check out HTML in this directory to see it!`);
-//         });
-//     });
-
-
-//         {
-//             type: 'checkbox',
-//             name: 'role',
-//             message: 'What employee would you like to choose',
-//             choices: ['Engineer', 'Intern', 'Team Completed']
-//         },
-       
-//         {
-//             type: 'checkbox',
-//             name: 'role',
-//             message: 'What employee would you like to choose',
-//             choices: ['Engineer', 'Intern', 'Team Completed']
-//         },
-
-   
-// };
-//     ]).then(projectData => {
-
-//         if (projectData.addemployee) {
-//             return promptEngineer();
-//         }
-//         else {
-//             return promptIntern()
+    ]).then(projectData => {
+        var newIntern = new Internclass(projectData.name, projectData.id, projectData.email, 'Intern', projectData.school);
+        internlist.push(newIntern);
+        if (projectData.addemployee) {
+            return promptQuestion();
+        } else {
+            return true;
+        }
 
 
-//         }
-
-//     });
-
-// const promptIntern = () => {
-//     return inquirer.prompt([
-//         {
-//             type: `input`,
-//             name: `name`,
-//             message: `What is the interns name?`,
-//             validate: nameInput => {
-//                 if (nameInput) {
-//                     return true;
-//                 }
-//                 else {
-//                     console.log('Please enter interns name!');
-//                     return false;
-//                 }
-//             }
-
-//         },
-//         {
-//             type: `input`,
-//             name: `id`,
-//             message: `What is the interns ID?`,
-//             validate: idInput => {
-//                 if (idInput) {
-//                     return true;
-//                 }
-//                 else {
-//                     console.log('Please enter interns ID!');
-//                     return false;
-//                 }
-//             }
-
-//         },
-//         {
-//             type: `input`,
-//             name: `email`,
-//             message: `What are the interns email?`,
-//             validate: emailInput => {
-//                 if (emailInput) {
-//                     return true;
-//                 }
-//                 else {
-//                     console.log('Please enter interns email!');
-//                     return false;
-//                 }
-//             }
-
-//         },
-//         {
-//             type: `input`,
-//             name: `school`,
-//             message: `What is interns school?`
-//         },
-//         {
-//             type: 'confirm',
-//             name: 'addemployee',
-//             message: 'Would you like to add another employee?',
-//             default: true
-//         },
-
-//         {
-//             type: 'checkbox',
-//             name: 'role',
-//             message: 'What employee would you like to choose',
-//             choices: ['Engineer', 'Intern']
-//         }
-
-//     ]).then(projectData => {
-
-//         if (projectData.addemployee) {
-//             return promptEngineer();
-//         }
-//         else {
-//             return promptIntern();
-
-
-//         }
-//     });
-// };
-
-// //     callmenu ();
-// //     });
-// // function callmenu () {
-
-// //     const engineer = {
-// //     message: 'Add Engineer',
-// //         choices: {
-
-
-
-// //     }
-// //   };
-
-// //   const intern = {
-// //     message: 'Add Intern',
-// //     choices: {
-// //       callApi: function() {
-// //         console.log('intern called');
-// //         return;
-// //       }
-// //     }
-// //   };
-
-// //   let level = 0;
-
-// //   function createMenu() {
-// //     return {
-// //       message: 'choose role ',
-// //       choices: {
-
-// //         engineer: engineer,
-// //         intern: intern
-// //       }
-// //     };
-// //   };
-
-// //   menu(createMenu)
-// //     .then(function() {
-// //       console.log('bye');
-// //     })
-// //     .catch(function(err) {
-// //       console.log(err.stack);
-// //     });
-// // }
+    });
+};
