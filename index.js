@@ -1,46 +1,51 @@
 const fs = require(`fs`);
 const inquirer = require(`inquirer`);
-const menu = require('inquirer-menu');
+const Employeeclass = require('./lib/Employee');
 const Managerclass = require('./lib/Manager')
 const Engineerclass = require('./lib/Engineer')
-const Internclass = require('./lib/Intern')
+const Internclass = require('./lib/Intern');
 // const  = require('./lib/Manager')
 
-'<div class="container flex-row justify-space-between align-center py-3">  <h1 page-title text-center py-2 px-3 style="background-color: red; color: white;">My Team</h1>  </div>'
+
 function generateMarkdown(managerlist, engineerlist, internlist) {
-    var managerHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+    var managerHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card bg-primary text-white" style="width: 18rem;"><div class="card-header">';
     for (var i = 0; i < managerlist.length; i++) {
         managerHTML = `${managerHTML}<h4><b>Name:  ${managerlist[i].getName()}</b></h4>`;
-        managerHTML = `${managerHTML}<h4><b><i class="oi oi-fork "> Role: ${managerlist[i].getRole()}</i></b></h4>`;
-        managerHTML = `${managerHTML}<p>Employee ID: ${managerlist[i].getId()}</p>`;
+        managerHTML = `${managerHTML}<h4><b><i class="oi oi-fork "> Role:  ${managerlist[i].getRole()}</i></b></h4></div>`;
+        managerHTML = `${managerHTML}<div class="card-body" style="background-color:white; color:black;"><p>Employee ID: ${managerlist[i].getId()}</p>`;
         managerHTML = `${managerHTML}<p>e-mail: <a href="mailto:${managerlist[i].getEmail()}">${managerlist[i].getEmail()}</a></p>`;
-        managerHTML = `${managerHTML}<p>Office Number: ${managerlist[i].getOfficeNumber()}</p></div><br/>`;
+        managerHTML = `${managerHTML}<p>Office Number: ${managerlist[i].getOfficeNumber()}</p></div></div><br/>`;
     }
 
     managerHTML = `${managerHTML}</div>`;
-    var engineerHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+	var engineerHTML = '';
+    var engineerHTMLBEGIN = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;">';
     for (var i = 0; i < engineerlist.length; i++) {
         var no = i + 1;
-        engineerHTML = `${engineerHTML}<h4><b>Name:  ${engineerlist[i].getName()}</b></h4>`;
-        engineerHTML = `${engineerHTML}<h4><b><i class="oi oi-browser "> Role: ${engineerlist[i].getRole()}</i></b></h4>`;
-        engineerHTML = `${engineerHTML}<p>Employee ID:${engineerlist[i].getId()}</p>`;
+        engineerHTML = `${engineerHTML}<div class="card bg-info text-white" style="width: 18rem;"><div class="card-header"><h4><b>Name:  ${engineerlist[i].getName()}</b></h4>`;
+        engineerHTML = `${engineerHTML}<h4><b><i class="oi oi-browser "> Role:  ${engineerlist[i].getRole()}</i></b></h4></div>`;
+        engineerHTML = `${engineerHTML}<div class="card-body" style="background-color:white; color:black;"><p>Employee ID: ${engineerlist[i].getId()}</p>`;
         engineerHTML = `${engineerHTML}<p>e-mail: <a href="mailto:${engineerlist[i].getEmail()}">${engineerlist[i].getEmail()}</a></p>`;
-        engineerHTML = `${engineerHTML}<p>GitHub username:  <a href="https://github.com/${engineerlist[i].getGitHub()}">${engineerlist[i].getGitHub()}</a></p></div><br/>`;
+        engineerHTML = `${engineerHTML}<p>GitHub username:  <a href="https://github.com/${engineerlist[i].getGitHub()}">${engineerlist[i].getGitHub()}</a></p></div></div><br/>`;
     }
-    engineerHTML = `${engineerHTML}</div>`;
+    engineerHTML = `${engineerHTMLBEGIN}${engineerHTML}</div>`;
 
-    var internHTML = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;"><div class="card" style="width: 18rem;"><div class="card-body" style="width: 18rem; background-color: blue; color: white;">';
+	var internHTML = '';
+    var internHTMLBEGIN = '<div class="col-sm" style="padding-top: 10px; padding-left: 10px;">';
     for (var i = 0; i < internlist.length; i++) {
         var no = i + 1;
-        internHTML = `${internHTML}<h4><b>Name:  ${internlist[i].getName()}</b></h4>`;
-        internHTML = `${internHTML}<h4><b><i class="oi oi-book "> Role: ${internlist[i].getRole()}</i></b></h4>`;
-        internHTML = `${internHTML}<p>Employee ID:${internlist[i].getId()}</p>`;
+        internHTML = `${internHTML}<div class="card bg-secondary text-white" style="width: 18rem;"><div class="card-header"><h4><b>Name:  ${internlist[i].getName()}</b></h4>`;
+        internHTML = `${internHTML}<h4><b><i class="oi oi-book "> Role:  ${internlist[i].getRole()}</i></b></h4></div>`;
+        internHTML = `${internHTML}<div class="card-body" style="background-color:white; color:black;"><p>Employee ID :${internlist[i].getId()}</p>`;
         internHTML = `${internHTML}<p>e-mail: <a href="mailto:${internlist[i].getEmail()}">${internlist[i].getEmail()}</a></p>`;
-        internHTML = `${internHTML}<p>School:  ${internlist[i].getSchool()}</p></div><br/>`;
+        internHTML = `${internHTML}<p>School:  ${internlist[i].getSchool()}</p></div></div><br/>`;
     }
-    internHTML = `${internHTML}</div>`;
+    internHTML = `${internHTMLBEGIN}${internHTML}</div>`;
     var beginHTML = '<html><head><meta charset="utf-8">' +
-        '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+        '<title>My Team</title>' +
+        // '<header>My Team Role</header>' +
+       '<nav class="navbar navbar-expand-lg navbar-dark bg-danger justify-content-center"><h1 class="text-center text-light">My Team</h1></nav>' +
+       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
         '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">' +
         '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />' +
         '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>' +
@@ -135,7 +140,7 @@ Manager()
         fs.writeFile(`myteam.html`, pageHTML, "utf8", err => {
             if (err) throw new Error(err);
 
-            console.log(`File created! check out HTML in this directory to see it!`);
+            console.log(`File created! check out myteam.html in this directory to see it!`);
         });
     });
 
@@ -188,9 +193,6 @@ const promptEngineer = () => {
                     return false;
                 }
             }
-
-
-
         },
         {
             type: `input`,
@@ -211,7 +213,16 @@ const promptEngineer = () => {
         {
             type: `input`,
             name: `github`,
-            message: `What is engineers GitHub username?`
+            message: `What is engineers GitHub username?`,
+            validate: github => {
+                if (github) {
+                    return true;
+                }
+                else {
+                    console.log('Please enter engineers GitHub username!');
+                    return false;
+                }
+            }
         },
         {
             type: 'confirm',
@@ -285,7 +296,18 @@ const promptIntern = () => {
         {
             type: `input`,
             name: `school`,
-            message: `What is interns school?`
+            message: `What is interns school?`,
+            validate: school => {
+                if (school) {
+                    return true;
+                }
+                else {
+                    console.log('Please enter interns school!');
+                    return false;
+                }
+            }
+            
+           
         },
         {
             type: 'confirm',
