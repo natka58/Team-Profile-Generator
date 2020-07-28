@@ -28,7 +28,7 @@
    ## Demo
   ![Screenshot](./images/demo.gif) \
 
-  [Demo URL](/https://drive.google.com/file/d/17FV0IKJgyV0Q9r4j0QvGNYKrjp8XyMiG/view)
+  [Demo URL](https://drive.google.com/file/d/17FV0IKJgyV0Q9r4j0QvGNYKrjp8XyMiG/view)
   ## Credits
    Program collaborators and third party assets: no collaborators
   
